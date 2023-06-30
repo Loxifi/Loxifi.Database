@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33712.159
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Loxifi.Database", "Loxifi.Database.csproj", "{6F01338F-65FE-419D-B1F8-FB1DF77025CA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6F01338F-65FE-419D-B1F8-FB1DF77025CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F01338F-65FE-419D-B1F8-FB1DF77025CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F01338F-65FE-419D-B1F8-FB1DF77025CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F01338F-65FE-419D-B1F8-FB1DF77025CA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D4CB40F3-B8DE-48BE-A1F2-59B3215240E1}
+	EndGlobalSection
+EndGlobal
