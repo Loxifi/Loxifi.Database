@@ -34,10 +34,22 @@ namespace Loxifi.Database
                 return ((int)(object)e).ToString();
             }
 
+            if(o is byte[] ba)
+            {
+                StringBuilder hex = new(ba.Length * 2 + 2);
+                hex.Append("0x");
+                foreach (byte bv in ba)
+                {
+                    hex.AppendFormat("{0:x2}", bv);
+                }
+
+                return hex.ToString();
+            }
+
             return o.ToString();
         }
 
-        public string GenerateInsert<T>(T toInsert) where T : class
+        public string GenerateInsert<T>(T toInsert, out bool hasKey) where T : class
         {
             if (toInsert is null)
             {
@@ -50,20 +62,58 @@ namespace Loxifi.Database
 
             stringBuilder.Append($"INSERT INTO [dbo].[{objectType.Name}] (");
 
-            stringBuilder.Append(this.PropertyNameList(objectType, true));
+            stringBuilder.Append(this.JoinedPropertyNameList(objectType, true));
 
             stringBuilder.Append(')');
 
-            if (this.TryGetKey(objectType, out PropertyInfo keyProperty))
+            if (hasKey = this.TryGetKey(objectType, out PropertyInfo keyProperty))
             {
                 stringBuilder.Append($" output INSERTED.{keyProperty.Name} ");
             }
 
             stringBuilder.Append(" VALUES (");
 
-            stringBuilder.Append(this.PropertyValueList(objectType, toInsert, true));
+            stringBuilder.Append(this.JoinedPropertyValueList(objectType, toInsert, true));
 
             stringBuilder.Append(')');
+
+            return stringBuilder.ToString();
+        }
+
+        public string GenerateUpdate<T>(T toInsert) where T : class
+        {
+            if (toInsert is null)
+            {
+                throw new ArgumentNullException(nameof(toInsert));
+            }
+
+            Type objectType = toInsert.GetType();
+
+            if (!this.TryGetKey(objectType, out PropertyInfo keyProperty))
+            {
+                throw new ArgumentException($"Can not update entity of type {objectType} with no Key");
+            }
+
+            long keyValue = (long)keyProperty.GetValue(toInsert);
+
+            StringBuilder stringBuilder = new();
+
+            stringBuilder.Append($"UPDATE [dbo].[{objectType.Name}] SET ");
+
+            List<string> propertyNames = this.PropertyNameList(objectType, true).ToList();
+            List<string> propertyValues = this.PropertyValueList(objectType, toInsert, true).ToList();
+
+            for (int i = 0; i < propertyNames.Count; i++)
+            {
+                if(i != 0)
+                {
+                    stringBuilder.Append(", ");
+                }
+
+                stringBuilder.Append($"{propertyNames[i]} = {propertyValues[i]}");
+            }
+
+            stringBuilder.Append($" WHERE [{keyProperty.Name}] = {keyValue}");
 
             return stringBuilder.ToString();
         }
@@ -98,46 +148,32 @@ namespace Loxifi.Database
             }
         }
 
-        private string PropertyNameList(Type type, bool skipKey)
-        {
-            StringBuilder sb = new();
+        private string JoinedPropertyNameList(Type type, bool skipKey) => string.Join(", ", this.PropertyNameList(type, skipKey));
 
+        private IEnumerable<string> PropertyNameList(Type type, bool skipKey)
+        {
             PropertyInfo[] properties = this.GetMappedProperties(type, skipKey).ToArray();
 
             for (int i = 0; i < properties.Length; i++)
             {
                 PropertyInfo pi = properties[i];
 
-                if (i > 0)
-                {
-                    sb.Append(',');
-                }
-
-                sb.Append($"[{pi.Name}]");
+                yield return $"[{pi.Name}]";
             }
-
-            return sb.ToString();
         }
 
-        private string PropertyValueList(Type type, object instance, bool skipKey)
-        {
-            StringBuilder sb = new();
+        private string JoinedPropertyValueList(Type type, object instance, bool skipKey) => string.Join(", ", this.PropertyValueList(type, instance, skipKey));
 
+        private IEnumerable<string> PropertyValueList(Type type, object instance, bool skipKey)
+        {
             PropertyInfo[] properties = this.GetMappedProperties(type, skipKey).ToArray();
 
             for (int i = 0; i < properties.Length; i++)
             {
                 PropertyInfo pi = properties[i];
 
-                if (i > 0)
-                {
-                    sb.Append(',');
-                }
-
-                sb.Append(this.FormatArgument(pi.GetValue(instance)));
+                yield return this.FormatArgument(pi.GetValue(instance));
             }
-
-            return sb.ToString();
         }
 
         private bool TryGetKey(Type type, out PropertyInfo keyProperty)
