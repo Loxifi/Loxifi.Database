@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Loxifi.Extensions
+﻿namespace Loxifi.Extensions
 {
     public static class IEnumerableExtensions
     {
@@ -29,7 +25,7 @@ namespace Loxifi.Extensions
 
                 if (!enumerator.MoveNext())
                 {
-                    if(list.Count > 0)
+                    if (list.Count > 0)
                     {
                         yield return list;
                     }

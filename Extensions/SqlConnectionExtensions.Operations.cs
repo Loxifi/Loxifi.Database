@@ -1,6 +1,4 @@
-﻿using Loxifi.Database;
-using System.Data.SqlClient;
-using System.Reflection;
+﻿using System.Data.SqlClient;
 using System.Text;
 
 namespace Loxifi.Extensions
@@ -53,7 +51,7 @@ namespace Loxifi.Extensions
 
             if (hasKey)
             {
-                returnValue = statelessCommand.ExecuteScalar<int>(parsedQuery, commandTimeout);
+                returnValue = statelessCommand.ExecuteScalar<long>(parsedQuery, commandTimeout);
             }
             else
             {
@@ -88,10 +86,12 @@ namespace Loxifi.Extensions
                 {
                     yield return (T)(object)reader.GetString();
 
-                } else if (itemType.IsPrimitive)
+                }
+                else if (itemType.IsPrimitive)
                 {
                     yield return reader.GetPrimitive<T>();
-                } else
+                }
+                else
                 {
                     yield return reader.GetComplex<T>();
                 }

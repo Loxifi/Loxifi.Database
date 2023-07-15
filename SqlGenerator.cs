@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using System.Text;
 
-namespace Loxifi.Database
+namespace Loxifi
 {
     public class SqlGenerator
     {
@@ -34,7 +34,7 @@ namespace Loxifi.Database
                 return ((int)(object)e).ToString();
             }
 
-            if(o is byte[] ba)
+            if (o is byte[] ba)
             {
                 StringBuilder hex = new(ba.Length * 2 + 2);
                 hex.Append("0x");
@@ -105,7 +105,7 @@ namespace Loxifi.Database
 
             for (int i = 0; i < propertyNames.Count; i++)
             {
-                if(i != 0)
+                if (i != 0)
                 {
                     stringBuilder.Append(", ");
                 }
