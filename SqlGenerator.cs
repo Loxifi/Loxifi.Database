@@ -49,7 +49,7 @@ namespace Loxifi
             return o.ToString();
         }
 
-        public string GenerateInsert<T>(T toInsert, out bool hasKey) where T : class
+        public string GenerateInsert<T>(T toInsert, out PropertyInfo keyProperty) where T : class
         {
             if (toInsert is null)
             {
@@ -66,7 +66,7 @@ namespace Loxifi
 
             stringBuilder.Append(')');
 
-            if (hasKey = this.TryGetKey(objectType, out PropertyInfo keyProperty))
+            if (this.TryGetKey(objectType, out keyProperty))
             {
                 stringBuilder.Append($" output INSERTED.{keyProperty.Name} ");
             }

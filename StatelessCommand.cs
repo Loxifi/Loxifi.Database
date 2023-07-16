@@ -60,6 +60,17 @@ namespace Loxifi
             return (T)result;
         }
 
+        public object ExecuteScalar(string query, int? commandTimeout)
+        {
+            using SqlCommand command = new(query, this._connection);
+            if (commandTimeout.HasValue)
+            {
+                command.CommandTimeout = commandTimeout.Value;
+            }
+
+            return command.ExecuteScalar();
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!this._disposedValue)
