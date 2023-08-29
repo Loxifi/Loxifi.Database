@@ -19,7 +19,12 @@ namespace Loxifi
                 return $"N'{s.Replace("'", "''")}'";
             }
 
-            if (o is DateTime dt)
+			if (o is Guid g)
+			{
+				return $"N'{g}'";
+			}
+
+			if (o is DateTime dt)
             {
                 return $"'{dt:yyyy-MM-dd HH:mm:ss.fff}'";
             }
