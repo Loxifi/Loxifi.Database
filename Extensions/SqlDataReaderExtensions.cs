@@ -52,15 +52,22 @@ namespace Loxifi.Extensions
                     // Handle null database values
                     object value = TypeConverter.ConvertType(pi, reader[column]);
                     
-                    pi.SetValue(item, value is DBNull ? null : value, null);
+                    pi.SetValue(item, value, null);
                 }
             }
 
             return item;
         }
 
+        public static T? GetPrimitive<T>(this SqlDataReader reader, int column = 0)
+        {
+            if (reader[column] is DBNull)
+            {
+                return default;
+            }
 
-        public static T GetPrimitive<T>(this SqlDataReader reader, int column = 0) => (T)Convert.ChangeType(reader[column], typeof(T));
+            return (T)Convert.ChangeType(reader[column], typeof(T));
+        }
 
         public static string GetString(this SqlDataReader reader) => reader.GetString(0);
     }

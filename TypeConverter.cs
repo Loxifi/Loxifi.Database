@@ -18,14 +18,19 @@ namespace Loxifi
 			typeof(ulong)
 		};
 
-		public static object ConvertType(PropertyInfo targetProperty, object value)
+		public static object? ConvertType(PropertyInfo targetProperty, object value)
 		{
 			if (value is null)
 			{
 				return Activator.CreateInstance(targetProperty.PropertyType);
 			}
 
-			if (targetProperty.PropertyType == value.GetType())
+            if (value is DBNull)
+            {
+				return null;
+            }
+
+            if (targetProperty.PropertyType == value.GetType())
 			{
 				return value;
 			}
@@ -43,7 +48,7 @@ namespace Loxifi
 				}
 			}
 
-			throw new NotImplementedException();
+			throw new NotImplementedException($"No conversion method between property type '{targetProperty.PropertyType}' on property '{targetProperty.Name}' and database return type '{value.GetType()}'");
 		}
 
 		public static object NumericAsEnum(Type enumType, object value)
