@@ -26,7 +26,7 @@ namespace Loxifi
 
 			if (o is DateTime dt)
             {
-                return $"'{dt:yyyy-MM-dd HH:mm:ss.fff}'";
+                return $"'{dt:yyyy-MM-dd HH:mm:ss.fffffff}'";
             }
 
             if (o is bool b)

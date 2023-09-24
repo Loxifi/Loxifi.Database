@@ -48,7 +48,7 @@ namespace Loxifi
 				}
 			}
 
-			throw new NotImplementedException($"No conversion method between property type '{targetProperty.PropertyType}' on property '{targetProperty.Name}' and database return type '{value.GetType()}'");
+			return value;
 		}
 
 		public static object NumericAsEnum(Type enumType, object value)

@@ -14,7 +14,33 @@ namespace Loxifi.Extensions
             connection.ExecuteNonQuery(parsedQuery, commandTimeout);
         }
 
-        public static void InsertRange<T>(this SqlConnection connection, IEnumerable<T> toInsert, int batch = 1000, int? commandTimeout = null) where T : class
+		public static void UpdateRange<T>(this SqlConnection connection, IEnumerable<T> toUpdate, int batch = 1000, int? commandTimeout = null) where T : class
+		{
+			StringBuilder queryBuilder = new();
+
+			if (batch <= 0)
+			{
+				throw new ArgumentException("Batch size must be greater than 0");
+			}
+
+			using StatelessCommand statelessCommand = new(connection);
+
+			foreach (IEnumerable<T> thisBatch in toUpdate.GroupByCount(batch))
+			{
+				foreach (T item in thisBatch)
+				{
+					string thisUpdate = _sqlGenerator.GenerateUpdate(item);
+
+					queryBuilder.AppendLine(thisUpdate);
+				}
+
+				statelessCommand.ExecuteNonQuery(queryBuilder.ToString(), commandTimeout);
+
+				queryBuilder.Clear();
+			}
+		}
+
+		public static void InsertRange<T>(this SqlConnection connection, IEnumerable<T> toInsert, int batch = 1000, int? commandTimeout = null) where T : class
         {
             StringBuilder queryBuilder = new();
 
